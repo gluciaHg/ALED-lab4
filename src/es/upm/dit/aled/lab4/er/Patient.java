@@ -130,16 +130,24 @@ public class Patient extends Thread {
 	 * movement is animated by the GUI and the index is increased by one.
 	 */
 	private void advanceProtocol() {
-		// TODO
+		EmergencyRoomGUI.getInstance().animateTransfer(this, this.getProtocol().get(indexProtocol));
+		setLocation(protocol.get(indexProtocol).getTo());
+		this.indexProtocol++;
+		
 	}
 
 	/**
 	 * Simulates the treatment of the Patient at its current location. Therefore,
 	 * the Patient must spend at this method the amount of time specified in such
 	 * Area.
+	 * @throws InterruptedException 
 	 */
 	private void attendedAtLocation() {
-		// TODO
+		try {
+			sleep(location.getTime());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -149,7 +157,14 @@ public class Patient extends Thread {
 	 */
 	@Override
 	public void run() {
-		// TODO
+		while(indexProtocol < protocol.size()) {
+			attendedAtLocation();
+			advanceProtocol();
+		}
+		if(indexProtocol == protocol.size()) {
+			attendedAtLocation();
+		EmergencyRoomGUI.getInstance().removePatient(this);
+		}
 	}
 
 }
